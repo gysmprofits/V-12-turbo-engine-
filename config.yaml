@@ -4,7 +4,22 @@ paths:
 run:
   league: "DEMO_LEAGUE"
   slate_id: "DAILY"
+  timezone: "UTC"paths:
+  data_root: "data"
+
+run:
+  league: "NHL"
+  slate_id: "DAILY"
   timezone: "UTC"
+  run_date: ""   # optional: "2025-12-29" ; blank means today (UTC)
+
+quality_gates:
+  min_matchups: 1
+  max_missing_critical_pct: 0.25
+
+risk:
+  min_confidence: 0.10
+  max_uncertainty: 0.95
 
 quality_gates:
   min_matchups: 1
