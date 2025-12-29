@@ -183,7 +183,30 @@ class NHLAdapter:
         # Availability placeholder (we can add injuries/goalie later)
         availability = ratings[["team"]].copy()
         availability["avail"] = 1.0
+        # ---- Team map (full name -> abbrev) to prevent HOME_ICE-only outputs ----
+        try:
+            teams_js = self._get("https://statsapi.web.nhl.com/api/v1/teams")
+            name_to_abbrev = {}
+            for t in teams_js.get("teams", []):
+                name = (t.get("name") or "").strip()
+                abbr = (t.get("abbreviation") or "").strip()
+                if name and abbr:
+                    name_to_abbrev[name] = abbr
 
+            # If schedule uses full names, convert to abbrev
+            if not schedule_df.empty:
+                schedule_df["home"] = schedule_df["home"].apply(lambda x: name_to_abbrev.get(str(x), str(x)))
+                schedule_df["away"] = schedule_df["away"].apply(lambda x: name_to_abbrev.get(str(x), str(x)))
+
+            # If standings/ratings use full names, convert to abbrev
+            if not ratings.empty:
+                ratings["team"] = ratings["team"].apply(lambda x: name_to_abbrev.get(str(x), str(x)))
+
+            if not availability.empty:
+                availability["team"] = availability["team"].apply(lambda x: name_to_abbrev.get(str(x), str(x)))
+
+        except Exception as e:
+            notes.append(f"team_map_failed:{type(e).__name__}")
         return {
             "schedule": schedule_df,
             "ratings": ratings,
