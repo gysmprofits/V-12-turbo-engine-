@@ -1,0 +1,15 @@
+paths:
+  data_root: "data"
+
+run:
+  league: "DEMO_LEAGUE"
+  slate_id: "DAILY"
+  timezone: "UTC"
+
+quality_gates:
+  min_matchups: 1
+  max_missing_critical_pct: 0.25
+
+risk:
+  min_confidence: 0.55
+  max_uncertainty: 0.60
